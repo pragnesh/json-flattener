@@ -26,11 +26,10 @@ import static org.apache.commons.lang3.Validate.notNull;
 import java.io.IOException;
 import java.io.Reader;
 import java.math.BigDecimal;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
+import com.eclipsesource.json.JsonArray;
 import org.apache.commons.lang3.StringUtils;
 
 import com.eclipsesource.json.Json;
@@ -294,7 +293,14 @@ public final class JsonFlattener {
         elementIters.removeLast();
       } else if (deepestIter.peek() instanceof Member) {
         Member mem = (Member) deepestIter.next();
-        reduce(mem.getValue());
+        List<String> truncateArray = Arrays.asList("imp", "deals", "format", "detectedVertical", "nativeAdTemplate",
+                "refreshSettings","bidResponseFeedback","assets");
+        List<String> truncateMap = Arrays.asList("data", "req", "res", "bidder-et");
+        if(truncateArray.contains(mem.getName())) {
+          reduce(new JsonArray().add(mem.getValue().asArray().get(0)));
+        }else if(!truncateMap.contains(mem.getName())) {
+          reduce(mem.getValue());
+        }
       } else { // JsonValue
         JsonValue val = (JsonValue) deepestIter.next();
         reduce(val);
@@ -308,9 +314,23 @@ public final class JsonFlattener {
     if (val.isObject() && val.asObject().iterator().hasNext()) {
       elementIters.add(newIndexedPeekIterator(val.asObject()));
     } else if (val.isArray() && val.asArray().iterator().hasNext()) {
+      JsonifyArrayList<Object> array = newJsonifyArrayList();
       switch (flattenMode) {
+        case KEEP_LEAF_ARRAYS:
+          Boolean allLiteral = Boolean.TRUE;
+          for (JsonValue value : val.asArray()) {
+            array.add(jsonVal2Obj(value));
+            if(value.isObject()){
+              allLiteral = Boolean.FALSE;
+            }
+          }
+          if(allLiteral){
+            flattenedMap.put(computeKey(), array);
+          } else {
+            elementIters.add(newIndexedPeekIterator(val.asArray()));
+          }
+          break;
         case KEEP_ARRAYS:
-          JsonifyArrayList<Object> array = newJsonifyArrayList();
           for (JsonValue value : val.asArray()) {
             array.add(jsonVal2Obj(value));
           }
@@ -333,6 +353,28 @@ public final class JsonFlattener {
     if (val.isString()) return val.asString();
     if (val.isNumber()) return new BigDecimal(val.toString());
     switch (flattenMode) {
+      case KEEP_LEAF_ARRAYS:
+        Boolean allLiteral = Boolean.TRUE;
+        if (val.isArray()) {
+          JsonifyArrayList<Object> array = newJsonifyArrayList();
+          for (JsonValue value : val.asArray()) {
+            array.add(jsonVal2Obj(value));
+            if(value.isObject()){
+              allLiteral = Boolean.FALSE;
+            }
+          }
+          if(allLiteral){
+            return array;
+          } else {
+            return newJsonifyArrayList();
+          }
+        } else if (val.isObject()) {
+          if (val.asObject().iterator().hasNext()) {
+            return newJsonFlattener(val.toString()).flattenAsMap();
+          } else {
+            return newJsonifyLinkedHashMap();
+          }
+        }
       case KEEP_ARRAYS:
         if (val.isArray()) {
           JsonifyArrayList<Object> array = newJsonifyArrayList();
