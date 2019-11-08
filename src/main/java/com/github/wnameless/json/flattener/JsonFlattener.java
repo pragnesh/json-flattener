@@ -314,23 +314,27 @@ public final class JsonFlattener {
     if (val.isObject() && val.asObject().iterator().hasNext()) {
       elementIters.add(newIndexedPeekIterator(val.asObject()));
     } else if (val.isArray() && val.asArray().iterator().hasNext()) {
-      JsonifyArrayList<Object> array = newJsonifyArrayList();
       switch (flattenMode) {
         case KEEP_LEAF_ARRAYS:
           Boolean allLiteral = Boolean.TRUE;
           for (JsonValue value : val.asArray()) {
-            array.add(jsonVal2Obj(value));
-            if(value.isObject()){
+            if (value.isArray() || value.isObject()) {
               allLiteral = Boolean.FALSE;
+              break;
             }
           }
           if(allLiteral){
+            JsonifyArrayList<Object> array = newJsonifyArrayList();
+            for (JsonValue value : val.asArray()) {
+              array.add(jsonVal2Obj(value));
+            }
             flattenedMap.put(computeKey(), array);
           } else {
             elementIters.add(newIndexedPeekIterator(val.asArray()));
           }
           break;
         case KEEP_ARRAYS:
+          JsonifyArrayList<Object> array = newJsonifyArrayList();
           for (JsonValue value : val.asArray()) {
             array.add(jsonVal2Obj(value));
           }
@@ -353,28 +357,6 @@ public final class JsonFlattener {
     if (val.isString()) return val.asString();
     if (val.isNumber()) return new BigDecimal(val.toString());
     switch (flattenMode) {
-      case KEEP_LEAF_ARRAYS:
-        Boolean allLiteral = Boolean.TRUE;
-        if (val.isArray()) {
-          JsonifyArrayList<Object> array = newJsonifyArrayList();
-          for (JsonValue value : val.asArray()) {
-            array.add(jsonVal2Obj(value));
-            if(value.isObject()){
-              allLiteral = Boolean.FALSE;
-            }
-          }
-          if(allLiteral){
-            return array;
-          } else {
-            return newJsonifyArrayList();
-          }
-        } else if (val.isObject()) {
-          if (val.asObject().iterator().hasNext()) {
-            return newJsonFlattener(val.toString()).flattenAsMap();
-          } else {
-            return newJsonifyLinkedHashMap();
-          }
-        }
       case KEEP_ARRAYS:
         if (val.isArray()) {
           JsonifyArrayList<Object> array = newJsonifyArrayList();
