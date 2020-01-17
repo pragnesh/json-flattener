@@ -295,7 +295,7 @@ public final class JsonFlattener {
         Member mem = (Member) deepestIter.next();
         List<String> truncateArray = Arrays.asList("imp", "deals", "format", "detectedVertical", "nativeAdTemplate",
                 "refreshSettings","bidResponseFeedback","assets");
-        List<String> truncateMap = Arrays.asList("data", "req", "res", "bidder-et");
+        List<String> truncateMap = Arrays.asList("data", "bidder-et");
         if(truncateArray.contains(mem.getName())) {
           reduce(new JsonArray().add(mem.getValue().asArray().get(0)));
         }else if(!truncateMap.contains(mem.getName())) {
