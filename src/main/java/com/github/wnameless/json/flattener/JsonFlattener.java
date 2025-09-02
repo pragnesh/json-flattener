@@ -21,9 +21,7 @@ import static java.util.Collections.EMPTY_MAP;
 import static org.apache.commons.lang3.Validate.isTrue;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
@@ -110,6 +108,9 @@ public final class JsonFlattener {
   }
 
   private static final JsonCore<?> jsonCore = new JacksonJsonCore();
+  private static final List<String> truncateMap = Arrays.asList("data", "bidder-et");
+  private static final List<String> truncateArray = Arrays.asList("imp", "deals", "format", "detectedVertical", "nativeAdTemplate",
+            "refreshSettings", "bidResponseFeedback", "assets");
   private final Deque<IndexedPeekIterator<?>> elementIters = new ArrayDeque<>();
   private final JsonValueBase<?> source;
 
@@ -357,7 +358,7 @@ public final class JsonFlattener {
     if (flattenedMap != null) return flattenedMap;
 
     flattenedMap = newJsonifyLinkedHashMap();
-    reduce(source);
+    reduce(source, false);
 
     while (!elementIters.isEmpty()) {
       IndexedPeekIterator<?> deepestIter = elementIters.getLast();
@@ -367,17 +368,21 @@ public final class JsonFlattener {
         @SuppressWarnings("unchecked")
         Entry<String, ? extends JsonValueBase<?>> mem =
             (Entry<String, ? extends JsonValueBase<?>>) deepestIter.next();
-        reduce(mem.getValue());
+          if (truncateArray.contains(mem.getKey())) {
+              reduce(mem.getValue(), true);
+          }else if (!truncateMap.contains(mem.getKey())) {
+              reduce(mem.getValue(), false);
+          }
       } else { // JsonValue
         JsonValueBase<?> val = (JsonValueBase<?>) deepestIter.next();
-        reduce(val);
+        reduce(val, false);
       }
     }
 
     return flattenedMap;
   }
 
-  private void reduce(JsonValueBase<?> val) {
+  private void reduce(JsonValueBase<?> val, boolean truncate) {
     if (val.isObject() && val.asObject().iterator().hasNext()) {
       elementIters.add(newIndexedPeekIterator(val.asObject()));
     } else if (val.isArray() && val.asArray().iterator().hasNext()) {
@@ -395,10 +400,20 @@ public final class JsonFlattener {
             JsonifyArrayList<Object> array = newJsonifyArrayList();
             for (JsonValueBase<?> value : val.asArray()) {
               array.add(jsonVal2Obj(value));
+              if(truncate) break;
             }
             flattenedMap.put(computeKey(), array);
           } else {
-            elementIters.add(newIndexedPeekIterator(val.asArray()));
+              if(truncate){
+                  ArrayList<JsonValueBase<?>> array = newJsonifyArrayList();
+                  for (JsonValueBase<?> value : val.asArray()) {
+                      array.add(value);
+                      break;
+                  }
+                  elementIters.add(newIndexedPeekIterator(array));
+              } else {
+                  elementIters.add(newIndexedPeekIterator(val.asArray()));
+              }
           }
           break;
         case KEEP_ARRAYS:

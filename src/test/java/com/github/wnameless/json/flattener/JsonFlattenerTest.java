@@ -53,6 +53,47 @@ public class JsonFlattenerTest {
   }
 
   @Test
+  public void testFlattenAe() throws IOException {
+    URL url = Resources.getResource("test7.json");
+    String json = Resources.toString(url, StandardCharsets.UTF_8);
+
+    assertEquals(
+            "{\"a[0].b\":1,\"a[0].c\":null,\"a[0].d\":[false,true],\"e\":\"f\",\"g\":2.3}",
+            new JsonFlattener(json).withFlattenMode(FlattenMode.KEEP_PRIMITIVE_ARRAYS).flatten());
+  }
+
+
+  @Test
+  public void testFlattenAe2() throws IOException {
+    URL url = Resources.getResource("test8.json");
+    String json = Resources.toString(url, StandardCharsets.UTF_8);
+
+    assertEquals(
+            "{\"r.id\":\"test\",\"r.imp[0].id\":\"test\",\"r.imp[0].banner.w\":300,\"r.imp[0].banner.h\":250,\"r.imp[0].banner.id\":\"1\",\"r.imp[0].banner.pos\":\"UNKNOWN\",\"r.imp[0].banner.battr\":[\"AUDIO_AUTO_PLAY\",\"EXPANDABLE_AUTOMATIC\",\"VIDEO_IN_BANNER_AUTO_PLAY\",\"VIDEO_IN_BANNER_USER_INITIATED\",\"POP\",\"PROVOCATIVE_OR_SUGGESTIVE\",\"ANNOYING\",\"TEXT_ONLY\",\"USER_INTERACTIVE\",\"WINDOWS_DIALOG_OR_ALERT_STYLE\"],\"r.imp[0].banner.format[0].w\":300,\"r.imp[0].banner.format[0].h\":250,\"r.imp[0].instl\":false,\"r.imp[0].tagid\":\"test\",\"r.imp[0].secure\":true,\"r.imp[0].reqMemberadprofile.estimatedClearPrice\":6.0,\"r.imp[0].reqMemberadprofile.predictedViewRate\":0.473046,\"r.imp[0].reqMemberadprofile.memberAdProfileId\":123,\"r.site.id\":\"123\",\"r.site.domain\":\"test.com\",\"r.site.cat\":[\"IAB1\",\"IAB9-26\",\"IAB9-1\",\"IAB1-2\"],\"r.site.page\":\"https://test.com\",\"r.site.publisher.id\":\"123\",\"r.device.dnt\":false,\"r.device.ua\":\"Mozilla/5.0 (Linux; Android 8.0.0; ONEPLUS A3003) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.80 Mobile Safari/537.36\",\"r.device.ip\":\"0.0.0.0\",\"r.device.geo.lat\":32,\"r.device.geo.lon\":-23,\"r.device.geo.country\":\"TEST\",\"r.device.geo.region\":\"TX\",\"r.device.geo.metro\":\"23\",\"r.device.geo.city\":\"sdf\",\"r.device.geo.zip\":\"123\",\"r.device.geo.utcoffset\":-230,\"r.device.geo.reqTimezone.timezone\":\"test/test/test\",\"r.device.language\":\"en\",\"r.device.make\":\"test\",\"r.device.model\":\"232\",\"r.device.os\":\"Android\",\"r.device.connectiontype\":\"CONNECTION_UNKNOWN\",\"r.device.devicetype\":\"HIGHEND_PHONE\",\"r.user.id\":\"123\",\"r.user.buyeruid\":\"123\",\"r.user.gender\":\"O\",\"r.user.user.userdatajson\":\"{\\\"uid\\\":\\\"123\\\"}\",\"r.at\":\"FIRST_PRICE\",\"r.tmax\":99,\"r.wseat\":[\"7559\"],\"r.cur\":[\"USD\"],\"r.badv\":[\"apple.com\",\"google.com\",\"rb.com\",\"localpromotions.info\",\"reimageplus.com\",\"equinox.com\",\"browserdl.com\",\"winfplayer.com\",\"flvblaster.org\",\"theyoutubedownloader.com\",\"dsnr-affiliates.com\",\"martinimediainc.com\",\"bestvideodownloader.com\",\"bigcommerce.com\",\"wisedownloads.com\",\"marimedia.net\",\"tuguu.com\",\"appround.net\",\"dsnrmi.com\",\"anchorfree.com\",\"exdownloadmanager.com\",\"ultimatesoftware.com\",\"flv2pc.com\",\"eztomp3.com\",\"swiki.com\",\"appround.biz\",\"lovedgames.com\",\"officedownloadcenter.nl\",\"keydownload.com\",\"zipdownloader.com\",\"update.com\",\"videostodownloadfree.com\",\"updater.com\",\"downloadorce.com\",\"get-your-free-downloads.com\",\"downloadxing.com\",\"downloadmixz.com\",\"greatappsdownload.com\",\"anyclip.com\",\"opendownloadmanager.com\",\"uno.edu\",\"macupdate.com\",\"zipdownloader.com\",\"downloadel.com\",\"duapps.com\",\"fastdownloaders.com\",\"updatersoft.com\",\"mobogenie.com\",\"downloadhunter.info\",\"beginfreedownload.com\",\"freeviruse.com\",\"updatedtech.com\",\"ipoll.com\",\"updatesoftnow.com\",\"xpdirectory.com\",\"newsletterclick.net\",\"3suisses.ru\"],\"r.regs.coppa\":false,\"r.source.fd\":true,\"r.source.tid\":\"234sdf\",\"r.reqSellermemberprofile.sellerMemberId\":123,\"r.reqSellermemberprofile.spendProtection\":false,\"exId\":106}",
+            new JsonFlattener(json).withFlattenMode(FlattenMode.KEEP_PRIMITIVE_ARRAYS).flatten());
+  }
+
+  @Test
+  public void testFlattenAe3() throws IOException {
+    URL url = Resources.getResource("test9.json");
+    String json = Resources.toString(url, StandardCharsets.UTF_8);
+
+    assertEquals(
+            "{\"r.id\":\"123\",\"r.imp[0].id\":\"123\",\"r.imp[0].banner.w\":728,\"r.imp[0].banner.h\":90,\"r.imp[0].banner.id\":\"1\",\"r.imp[0].banner.pos\":\"UNKNOWN\",\"r.imp[0].banner.format[0].w\":728,\"r.imp[0].banner.format[0].h\":90,\"r.imp[0].instl\":false,\"r.imp[0].tagid\":\"123\",\"r.imp[0].secure\":true,\"r.imp[0].reqMemberadprofile.estimatedClearPrice\":0.58,\"r.imp[0].reqMemberadprofile.predictedViewRate\":0.661628,\"r.imp[0].reqMemberadprofile.memberAdProfileId\":23,\"r.site.id\":\"12\",\"r.site.domain\":\"test.tv\",\"r.site.cat\":[\"IAB1\",\"IAB9-1\",\"IAB9-26\",\"IAB1-7\"],\"r.site.page\":\"https://test.tv/movie/\",\"r.site.publisher.id\":\"123\",\"r.device.dnt\":false,\"r.device.ua\":\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.140 Safari/537.36 Edge/17.17134\",\"r.device.ip\":\"0.0.0.0\",\"r.device.geo.country\":\"SDFS\",\"r.device.geo.region\":\"SDF\",\"r.device.geo.metro\":\"232\",\"r.device.geo.city\":\"234\",\"r.device.geo.zip\":\"123\",\"r.device.geo.utcoffset\":-580,\"r.device.geo.reqTimezone.timezone\":\"TEE/we\",\"r.device.language\":\"en\",\"r.device.make\":\"Unknown\",\"r.device.model\":\"Unknown\",\"r.device.os\":\"Microsoft Windows\",\"r.device.connectiontype\":\"CONNECTION_UNKNOWN\",\"r.device.devicetype\":\"PERSONAL_COMPUTER\",\"r.device.ifa\":\"123\",\"r.user.id\":\"123\",\"r.user.buyeruid\":\"123\",\"r.user.user.userdatajson\":\"{\\\"uid\\\":\\\"232\\\"}\",\"r.at\":\"FIRST_PRICE\",\"r.tmax\":150,\"r.wseat\":[\"2342\"],\"r.cur\":[\"USD\"],\"r.regs.coppa\":false,\"r.source.fd\":true,\"r.source.tid\":\"2323\",\"r.reqSellermemberprofile.sellerMemberId\":23,\"r.reqSellermemberprofile.spendProtection\":false,\"exId\":106}",
+            new JsonFlattener(json).withFlattenMode(FlattenMode.KEEP_PRIMITIVE_ARRAYS).flatten());
+  }
+
+  @Test
+  public void testFlattenAe4() throws IOException {
+    URL url = Resources.getResource("test10.json");
+    String json = Resources.toString(url, StandardCharsets.UTF_8);
+
+    assertEquals(
+            "{\"r.id\":\"234\",\"r.imp[0].id\":\"6456\",\"r.imp[0].banner.w\":220,\"r.imp[0].banner.h\":0,\"r.imp[0].banner.id\":\"1\",\"r.imp[0].banner.pos\":\"UNKNOWN\",\"r.imp[0].banner.asdf\":[\"sdf\"],\"r.imp[0].banner.format[0].w\":320,\"r.imp[0].banner.format[0].h\":50,\"r.imp[0].instl\":false,\"r.imp[0].tagid\":\"17890037\",\"r.imp[0].secure\":true,\"r.imp[0].reqMemberadprofile.estimatedClearPrice\":0.06,\"r.imp[0].reqMemberadprofile.predictedViewRate\":0.176762,\"r.imp[0].reqMemberadprofile.memberAdProfileId\":1105667,\"r.site.id\":\"2234\",\"r.site.domain\":\"testt.com\",\"r.site.cat\":[\"IAB17-29\",\"IAB17\",\"IAB17-7\",\"IAB17-41\",\"IAB17-9\"],\"r.site.page\":\"https://test.com\",\"r.site.publisher.id\":\"223\",\"r.device.dnt\":false,\"r.device.ua\":\"sdf\",\"r.device.ip\":\"0.0.0.0\",\"r.device.geo.country\":\"TEST\",\"r.device.geo.region\":\"TEST\",\"r.device.geo.metro\":\"1\",\"r.device.geo.city\":\"testcity\",\"r.device.geo.zip\":\"123\",\"r.device.geo.utcoffset\":23,\"r.device.geo.reqTimezone.timezone\":\"test/zone\",\"r.device.carrier\":\"testfone\",\"r.device.language\":\"en\",\"r.device.make\":\"tent\",\"r.device.model\":\"sdf\",\"r.device.os\":\"Android\",\"r.device.connectiontype\":\"tes\",\"r.device.devicetype\":\"tes\",\"r.user.id\":\"0\",\"r.user.user.userdatajson\":\"\",\"r.at\":\"FIRST_PRICE\",\"r.tmax\":150,\"r.sb\":[\"123222222\"],\"r.sdf\":[\"USD\"],\"r.asdf\":[\"sdf\"],\"r.regs.coppa\":false,\"r.source.fd\":false,\"r.source.tid\":\"asdf\",\"r.reqSellermemberprofile.sellerMemberId\":8610,\"r.reqSellermemberprofile.spendProtection\":false,\"exId\":106,\"req.exId\":106,\"req.mob.adid\":\"\",\"req.mob.pf\":\"sdf\",\"req.mob.sdf\":false,\"req.mob.ismob\":\"HIGHEND_PHONE\",\"req.hm\":\"\",\"req.ip\":\"0.0.0.\",\"req.dnt\":\"0\",\"req.istest\":false,\"req.type\":\"HIGHEND_PHONE\",\"req.url\":\"test\",\"req.geoid\":235,\"req.cat\":\"IAB17-29\",\"req.brf\":{},\"req.id\":\"1677251770955098354\",\"req.bs\":\"sdff\",\"req.device.carrier\":\"test\",\"req.device.osv\":\"\",\"req.device.os\":\"Android\",\"req.device.model\":\"sdf\",\"req.device.connectiontype\":3,\"req.device.brand\":\"sfd\",\"req.pagecat\":\"\",\"req.ts\":1579244313233,\"res.bcp.zd\":\"12\",\"res.bcp.adf\":\"1.0\",\"res.bcp.vf\":\"1.0\",\"res.bcp.a\":\"23\",\"res.bcp.2\":\"2\",\"res.bcp.x\":1.0,\"res.bcp.b\":1.0,\"res.bcp.z\":\"123\",\"res.bcp.rc\":129600,\"res.bcp.cpbm\":\"nullx1.0\",\"res.bcp.v\":\"1.0x1.0x1.0x1.0\",\"res.bcp.bid\":\"10x0.315x3x1.0\",\"res.bcp.fc\":0,\"res.bcp.s\":\"1.0x1.0x1.0\",\"res.bcp.dc\":0,\"res.bcp.afc\":0,\"x\":\"1677251770955098354\",\"s\":2.104234}",
+            new JsonFlattener(json).withFlattenMode(FlattenMode.KEEP_PRIMITIVE_ARRAYS).flatten());
+  }
+
+  @Test
   public void testFlatten() throws IOException {
     URL url = Resources.getResource("test2.json");
     String json = Resources.toString(url, StandardCharsets.UTF_8);
