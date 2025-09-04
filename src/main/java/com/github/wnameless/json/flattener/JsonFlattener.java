@@ -111,6 +111,7 @@ public final class JsonFlattener {
   private static final List<String> truncateMap = Arrays.asList("data", "bidder-et");
   private static final List<String> truncateArray = Arrays.asList("imp", "deals", "format", "detectedVertical", "nativeAdTemplate",
             "refreshSettings", "bidResponseFeedback", "assets");
+  private static final List<String> blacklist = Arrays.asList("dsl");
   private final Deque<IndexedPeekIterator<?>> elementIters = new ArrayDeque<>();
   private final JsonValueBase<?> source;
 
@@ -358,7 +359,7 @@ public final class JsonFlattener {
     if (flattenedMap != null) return flattenedMap;
 
     flattenedMap = newJsonifyLinkedHashMap();
-    reduce(source, false);
+    reduce(source, false, true);
 
     while (!elementIters.isEmpty()) {
       IndexedPeekIterator<?> deepestIter = elementIters.getLast();
@@ -368,24 +369,28 @@ public final class JsonFlattener {
         @SuppressWarnings("unchecked")
         Entry<String, ? extends JsonValueBase<?>> mem =
             (Entry<String, ? extends JsonValueBase<?>>) deepestIter.next();
-          if (truncateArray.contains(mem.getKey())) {
-              reduce(mem.getValue(), true);
-          }else if (!truncateMap.contains(mem.getKey())) {
-              reduce(mem.getValue(), false);
+          if (blacklist.contains(mem.getKey())) {
+              reduce(mem.getValue(), false, false);
+          } else if (truncateArray.contains(mem.getKey())) {
+              reduce(mem.getValue(), true, true);
+          } else if (!truncateMap.contains(mem.getKey())) {
+              reduce(mem.getValue(), false, true);
           }
       } else { // JsonValue
         JsonValueBase<?> val = (JsonValueBase<?>) deepestIter.next();
-        reduce(val, false);
+        reduce(val, false, true);
       }
     }
 
     return flattenedMap;
   }
 
-  private void reduce(JsonValueBase<?> val, boolean truncate) {
-    if (val.isObject() && val.asObject().iterator().hasNext()) {
-      elementIters.add(newIndexedPeekIterator(val.asObject()));
-    } else if (val.isArray() && val.asArray().iterator().hasNext()) {
+  private void reduce(JsonValueBase<?> val, boolean truncate, boolean isFlatten) {
+      if (!isFlatten) {
+          flattenedMap.put(computeKey(), val);
+      } else if (val.isObject() && val.asObject().iterator().hasNext()) {
+          elementIters.add(newIndexedPeekIterator(val.asObject()));
+      } else if (val.isArray() && val.asArray().iterator().hasNext()) {
       switch (flattenMode) {
         case KEEP_PRIMITIVE_ARRAYS:
           boolean allPrimitive = true;

@@ -93,6 +93,16 @@ public class JsonFlattenerTest {
             new JsonFlattener(json).withFlattenMode(FlattenMode.KEEP_PRIMITIVE_ARRAYS).flatten());
   }
 
+    @Test
+    public void testFlattenAe5() throws IOException {
+        URL url = Resources.getResource("test11.json");
+        String json = Resources.toString(url, StandardCharsets.UTF_8);
+
+        assertEquals(
+                "{\"sdf\":232,\"dsl\":[{\"xx\":\"sdfs\"}],\"s\":1756980424365,\"dsl1[0].xx\":\"sdfs\"}",
+                new JsonFlattener(json).withFlattenMode(FlattenMode.KEEP_PRIMITIVE_ARRAYS).flatten());
+    }
+
   @Test
   public void testFlatten() throws IOException {
     URL url = Resources.getResource("test2.json");
